@@ -65,10 +65,10 @@ export const TransactionsTab = ({
               No transactions found
             </Text>
             <Text fontSize='16px'>
-              To get started, send DOGE to your wallet
+              To get started, send Nintondo to your wallet
             </Text>
             <BigButton mt='18px' onPress={toggleReceiveModal}>
-              Deposit DOGE
+              Deposit Nintondo
             </BigButton>
           </VStack>
         ) : (
