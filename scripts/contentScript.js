@@ -66,7 +66,7 @@ import {
       });
       return;
     }
-    if (client && balance) {
+    if (client && balance !== undefined && balance !== null) {
       window.postMessage(
         {
           type: MESSAGE_TYPES.CLIENT_GET_BALANCE_RESPONSE,

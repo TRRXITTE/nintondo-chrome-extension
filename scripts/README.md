@@ -55,7 +55,7 @@ if (myDogeMask?.isMyDoge) {
     // Send an inscription doginal/drc-20
     // Generates a popup to be confirmed by the user
     // Promise will reject or onError will be called if canceled
-    const txReqRes = await myDogeMask.requesInscriptionTransaction(
+    const txReqRes = await myDogeMask.requestInscriptionTransaction(
       {
         recipientAddress: 'DAHkCF5LajV6jYyi5o4eMvtpqXRcm9eZYq',
         location:
@@ -68,26 +68,41 @@ if (myDogeMask?.isMyDoge) {
     // { "txId": "b9fc04f226b194684fe24c786be89cae26abf8fcebbf90ff7049d5bc7fa003f0" }
 
     // Request connected address DRC-20 balance
-    const drc20BalanceRes = await myDogeMask.getDRC20Balance({ ticker: 'abcd', /*onSuccess, onError*/);
+    const drc20BalanceRes = await myDogeMask.getDRC20Balance({
+      ticker: 'abcd',
+      /*onSuccess, onError*/
+    });
     console.log('drc-20 balance result', drc20BalanceRes);
     // { "address": "DBKwBLEDY96jBtx1xCmjfBzp9FrNCWxnmM", "availableBalance": "4206912345678", "transferableBalance": "12345678", "ticker": "abcd" }
 
     // Request connected address transferable DRC-20 locations
-    const transferableRes = await myDogeMask.getTransferableDRC20({ ticker: 'abcd', /*onSuccess, onError*/);
+    const transferableRes = await myDogeMask.getTransferableDRC20({
+      ticker: 'abcd',
+      /*onSuccess, onError*/
+    });
     console.log('drc-20 transferable result', transferableRes);
     // { inscriptions: [{ "amount": "1000", "location": "68f08b2ad7dfd26192685e04a7038223fa0259e0878e1b636776104c1535bb9f:0:0" }], ticker: 'abcd', address: 'DLRAyAnjpP6tHtzT6D7MfpWuG1nEYvw9dA'}
 
     // Request a transaction to inscribe a transfer of avaialble drc-20 balance
     // Generates a popup to be confirmed by the user
     // Promise will reject or onError will be called if canceled
-    const availableRes = await myDogeMask.requestAvailableDRC20Transaction({ ticker: 'abcd', amount: 1000, /*onSuccess, onError*/);
+    const availableRes = await myDogeMask.requestAvailableDRC20Transaction({
+      ticker: 'abcd',
+      amount: 1000,
+      /*onSuccess, onError*/
+    });
     console.log('drc-20 request avaialable result', availableRes);
     // { "txId": "b9fc04f226b194684fe24c786be89cae26abf8fcebbf90ff7049d5bc7fa003f0" }
 
     // Request the signing of a psbt
     // Generates a popup to be confirmed by the user
     // Promise will reject or onError will be called if canceled
-    const psbtRes = await myDogeMask.requestPsbt({ rawTx: 'the raw tx hex', indexes: [1, 2], signOnly: false, /*onSuccess, onError*/);
+    const psbtRes = await myDogeMask.requestPsbt({
+      rawTx: 'the raw tx hex',
+      indexes: [1, 2],
+      signOnly: false,
+      /*onSuccess, onError*/
+    });
     console.log('psbt result', psbtRes);
     // { "txId": "b9fc04f226b194684fe24c786be89cae26abf8fcebbf90ff7049d5bc7fa003f0" } // signOnly = false will broadcast the tx and return the id
     // { "signedRawTx": "0200000003f6aa8bdb11845171310c42707c305f180c448a1b050e06ed020bdf4848315669010000006a4730440..." } // signOnly = true will return the raw signed tx
@@ -96,14 +111,20 @@ if (myDogeMask?.isMyDoge) {
     // Request the signing of an arbitrary message
     // Generates a popup to be confirmed by the user
     // Promise will reject or onError will be called if canceled
-    const signMessageRes = await myDogeMask.requestSignedMessage({ message: 'the message to sign', /*onSuccess, onError*/);
+    const signMessageRes = await myDogeMask.requestSignedMessage({
+      message: 'the message to sign',
+      /*onSuccess, onError*/
+    });
     console.log('signed message result', signMessageRes);
     // { "signedMessage": "H4jleC185TBygX2i5nSInIctdJ9QRsdvPL+jKyb00ngQGQxxl5oQ0ci9UFUk6drGwYa+Bya0jic5X/VGskWOO+w=" }
 
     // Request the decryption of an message encrypted with the connected address publickey
     // Generates a popup to be confirmed by the user
     // Promise will reject or onError will be called if canceled
-    const signMessageRes = await myDogeMask.requestDecryptedMessage({ message: 'the message to decrypt', /*onSuccess, onError*/);
+    const signMessageRes = await myDogeMask.requestDecryptedMessage({
+      message: 'the message to decrypt',
+      /*onSuccess, onError*/
+    });
     console.log('decrypted message result', signMessageRes);
     // { "decryptedMessage": "Some decrypted message text" }
 

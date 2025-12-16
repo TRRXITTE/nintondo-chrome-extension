@@ -28,7 +28,7 @@ export const ConfirmationScreen = ({
         data: { address: walletAddress },
       },
       (balance) => {
-        if (balance) {
+        if (balance !== undefined && balance !== null) {
           addressBalance = balance;
         } else {
           setErrors({ confirmation: 'Error getting address balance' });

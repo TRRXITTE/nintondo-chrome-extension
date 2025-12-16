@@ -82,7 +82,7 @@ export const getAddressBalance = (address) => {
         data: { address },
       },
       (balance) => {
-        if (balance) {
+        if (balance !== undefined && balance !== null) {
           resolve(balance);
         } else {
           reject(new Error('Unable to get address balance'));
