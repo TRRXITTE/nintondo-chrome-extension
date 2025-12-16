@@ -7,15 +7,15 @@ export const Footer = ({ ...props }) => {
 
   return (
     <Text textAlign='center' mt='80px' color='gray.400' {...props}>
-      Need help using MyDoge?{'\n'}
+      Need help using Nintondo?{'\n'}
       <Text
-        color='brandYellow.500'
+        color='brandYellow.300'
         underline
         fontWeight='medium'
         onClickFAQ
         onPress={() =>
           onLinkClick(
-            'https://intercom.help/mydoge/en/collections/3278627-mydoge-faq'
+            'https://nintondo.trrxitte.com/faq'
           )
         }
       >

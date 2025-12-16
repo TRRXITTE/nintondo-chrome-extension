@@ -5,14 +5,14 @@ export const ActionButton = ({ icon, onPress, label, ...props }) => {
     <VStack alignItems='center' space='8px'>
       <Pressable onPress={onPress} {...props}>
         <HStack
-          height='50px'
-          width='50px'
+          height='56px'
+          width='56px'
           bg='gray.100'
           alignItems='center'
           justifyContent='center'
           borderRadius='18px'
         >
-          <Image src={icon} width='24px' height='24px' alt={label} />
+          <Image src={icon} width='28px' height='28px' alt={label} />
         </HStack>
       </Pressable>
       <Text fontSize={13} fontWeight='500'>

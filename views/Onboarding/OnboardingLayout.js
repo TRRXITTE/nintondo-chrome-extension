@@ -23,13 +23,13 @@ export const OnboardingLayout = ({ children, ...props }) => {
             alt='background'
           />
           <Image
-            source={{ uri: '/assets/mydoge-logo.svg' }}
+            source={{ uri: '/assets/nintondo.png' }}
             size={250}
             resizeMode='contain'
             position='absolute'
             top='-30px'
             alignSelf='center'
-            alt='mydoge'
+            alt='nintondo'
           />
           <Image
             source={{ uri: '/assets/intro.png' }}

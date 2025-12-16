@@ -27,9 +27,9 @@ export function ClientConnect({ params, wallet, handleResponse }) {
 
   const onRejectConnection = useCallback(() => {
     handleResponse({
-      toastMessage: `MyDoge failed to connected to ${origin}`,
+      toastMessage: `Nintondo failed to connect to ${origin}`,
       toastTitle: 'Connection Failed',
-      error: 'Unable to connect to MyDoge',
+      error: 'Unable to connect to Nintondo',
     });
   }, [handleResponse, origin]);
 
@@ -75,7 +75,7 @@ export function ClientConnect({ params, wallet, handleResponse }) {
         <FaLink />
       </Box>
       <Text fontSize='2xl' pb='6px'>
-        Connect with <Text fontWeight='bold'>MyDoge</Text>
+        Connect with <Text fontWeight='bold'>Nintondo</Text>
       </Text>
       <Text fontSize='sm' color='gray.600'>
         Select the address you want to use with this site
@@ -122,7 +122,7 @@ export function ClientConnect({ params, wallet, handleResponse }) {
                       <Text color='gray.400' fontSize='xs'>
                         {addressBalances[address] ? (
                           <>
-                            <Text fontWeight='bold'>Balance: </Text>Ð
+                            <Text fontWeight='bold'>Balance: </Text>N
                             {sb.toBitcoin(addressBalances[address])}
                           </>
                         ) : (
@@ -175,7 +175,7 @@ const ConfirmationModal = ({
   const cancelRef = useRef();
   const onConnect = useCallback(() => {
     handleResponse({
-      toastMessage: `MyDoge has connected to ${origin}`,
+      toastMessage: `Nintondo has connected to ${origin}`,
       toastTitle: 'Connection Success',
       data: {
         approved: true,

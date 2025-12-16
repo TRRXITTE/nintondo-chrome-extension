@@ -43,7 +43,7 @@ import {
       (response) => {
         if (!response) {
           handleError({
-            errorMessage: 'Unable to connect to MyDoge',
+            errorMessage: 'Unable to connect to Nintondo',
             origin,
             messageType: MESSAGE_TYPES.CLIENT_REQUEST_CONNECTION_RESPONSE,
           });
@@ -198,7 +198,7 @@ import {
           origin
         );
       } else {
-        throw new Error('MyDoge is not connected to this website');
+        throw new Error('Nintondo is not connected to this website');
       }
     } catch (e) {
       handleError({

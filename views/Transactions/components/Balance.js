@@ -10,7 +10,17 @@ import { asFiat, formatSatoshisAsDoge } from '../../../utils/formatters';
 
 const EyeDisabled = 'assets/eye-disabled.svg';
 const EyeEnabled = 'assets/eye-enabled.svg';
-const MydogeIcon = 'assets/mydoge-icon.svg';
+const CoinIcon = 'assets/nintondo.png';
+const DollarBillBg =
+  'data:image/svg+xml,' +
+  encodeURIComponent(
+    `<svg xmlns='http://www.w3.org/2000/svg' width='200' height='120'>
+      <rect width='200' height='120' fill='#2e3b30'/>
+      <rect x='10' y='10' width='180' height='100' rx='12' fill='#365742' stroke='#77a07a' stroke-width='2'/>
+      <circle cx='100' cy='60' r='24' fill='none' stroke='#99c0a0' stroke-width='4'/>
+      <text x='100' y='68' font-size='18' font-family='Arial' text-anchor='middle' fill='#99c0a0'>$</text>
+    </svg>`
+  );
 
 const QUERY_INTERVAL = 10000;
 
@@ -26,22 +36,22 @@ export function Balance({ walletAddress }) {
         data: { address: walletAddress },
       },
       (walletBalance) => {
-        if (walletBalance) {
+        if (walletBalance !== undefined && walletBalance !== null) {
           setBalance(Number(walletBalance));
-        } else {
-          logError(new Error('Failed to get wallet balance'));
+          return;
         }
+        logError(new Error('Failed to get wallet balance'));
       }
     );
   }, [walletAddress]);
 
   const getDogecoinPrice = useCallback(() => {
     sendMessage({ message: MESSAGE_TYPES.GET_DOGECOIN_PRICE }, ({ usd }) => {
-      if (usd) {
+      if (usd !== undefined && usd !== null) {
         setUSDPrice(usd);
-      } else {
-        logError(new Error('Failed to get Dogecoin price'));
+        return;
       }
+      logError(new Error('Failed to get Nintondo price'));
     });
   }, []);
 
@@ -60,19 +70,9 @@ export function Balance({ walletAddress }) {
   const [balanceVisible, setBalanceVisible] = useState(false);
   const toggleBalanceVisibility = () => setBalanceVisible((v) => !v);
   return (
-    <VStack px='16px'>
-      <Image
-        src={MydogeIcon}
-        width={66}
-        height={66}
-        position='absolute'
-        top={0}
-        alignSelf='center'
-        zIndex={2}
-        alt='Mydoge icon'
-      />
+    <VStack px='16px' bg='#191919'>
       <VStack
-        bg='yellow.100'
+        bg='./assets/dollar-bill-bg.png'
         borderRadius={20}
         pb='14px'
         alignItems='center'
@@ -80,23 +80,37 @@ export function Balance({ walletAddress }) {
         mt={36}
         pt='30px'
         h='120px'
+        style={{
+          backgroundImage: `url(${DollarBillBg})`,
+          backgroundRepeat: 'repeat',
+          backgroundSize: '200px 120px',
+          border: '1px solid rgba(0,0,0,0.06)',
+          boxShadow: '0 6px 18px rgba(0,0,0,0.12)',
+        }}
       >
         {balance === null ? (
           <Spinner alignSelf='center' />
         ) : (
           <>
-            <Text secondary fontWeight='700' color='black' fontSize='35px'>
-              {!balanceVisible
-                ? typeof balance === 'number'
-                  ? `Ɖ${formatSatoshisAsDoge(balance, 3)}`
-                  : ' '
-                : 'Ɖ******'}
-            </Text>
+            <HStack alignItems='center' space='8px'>
+              <Image source={CoinIcon} width='28px' height='28px' alt='nintondo' />
+              <Text secondary fontWeight='700' color='white' fontSize='35px'>
+                {!balanceVisible
+                  ? typeof balance === 'number'
+                    ? Number(balance) === 0
+                      ? 'Nzero'
+                      : `N${formatSatoshisAsDoge(balance, 3)}`
+                    : ' '
+                  : 'N******'}
+              </Text>
+            </HStack>
             <HStack alignItems='center' justifyContent='center'>
-              <Text secondary color='gray.500' fontWeight='500'>
+              <Text secondary color='gray.200' fontWeight='500'>
                 {!balanceVisible
                   ? typeof usdValue === 'number'
-                    ? `$${asFiat(usdValue, 2)}`
+                    ? usdValue === 0
+                      ? '$zero'
+                      : `$${asFiat(usdValue, 2)}`
                     : ' '
                   : '$***.**'}
               </Text>

@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "MyDoge - Dogecoin Wallet",
+  "name": "Nintondo Nyan Wallet",
   "version": "1.3.1",
-  "description": "Dogecoin wallet for Chrome browser",
+  "description": "Nintondo Nyan wallet for Chrome browser",
   "permissions": ["storage", "tabs", "notifications", "offscreen"],
   "host_permissions": ["http://*/*", "https://*/*"],
   "background": {
@@ -10,10 +10,10 @@
     "type": "module"
   },
   "icons": {
-    "16": "assets/mydoge16.png",
-    "32": "assets/mydoge32.png",
-    "48": "assets/mydoge48.png",
-    "128": "assets/mydoge128.png"
+    "16": "assets/coin.png",
+    "32": "assets/coin.png",
+    "48": "assets/coin.png",
+    "128": "assets/nintondo.png"
   },
   "content_scripts": [
     {
@@ -28,7 +28,7 @@
     }
   ],
   "action": {
-    "default_title": "MyDoge",
+    "default_title": "Nintondo Nyan",
     "default_popup": "index.html"
   }
 }

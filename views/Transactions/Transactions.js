@@ -12,7 +12,6 @@ import { NFTsTab } from './components/NFTsTab';
 import { TokensTab } from './components/TokensTab';
 import { TransactionsTab } from './components/TransactionsTab';
 
-const Buy = 'assets/buy.svg';
 const Receive = 'assets/receive.svg';
 const Send = 'assets/send.svg';
 
@@ -54,10 +53,6 @@ export function Transactions() {
   const activeAddressNickname =
     wallet.nicknames?.[activeAddress] ?? `Address ${selectedAddressIndex + 1}`;
 
-  const onBuy = useCallback(() => {
-    window.open(`https://buy.getdoge.com/?addr=${activeAddress}`);
-  }, [activeAddress]);
-
   const [routes] = useState([
     { key: 'transactions', title: 'Transactions' },
     { key: 'doginals', title: 'NFTs' },
@@ -85,7 +80,6 @@ export function Transactions() {
     () => (
       <TransactionsTab
         toggleReceiveModal={toggleReceiveModal}
-        onBuy={onBuy}
         transactions={transactions}
         loading={isLoadingTransactions}
         hasMore={hasMoreTransactions}
@@ -96,7 +90,6 @@ export function Transactions() {
     ),
     [
       toggleReceiveModal,
-      onBuy,
       transactions,
       isLoadingTransactions,
       hasMoreTransactions,
@@ -140,8 +133,6 @@ export function Transactions() {
         <Balance walletAddress={activeAddress} />
         <Center>
           <HStack space='24px' pt='14px' pb='16px'>
-            <ActionButton icon={Buy} label='Buy' onPress={onBuy} />
-
             <ActionButton
               icon={Receive}
               label='Receive'

@@ -1,0 +1,32 @@
+version: '3.9'
+services:
+  api:
+    build: .
+    command: ["yarn", "api"]
+    ports:
+      - "${PORT:-4000}:4000"
+    environment:
+      - PORT=4000
+      - API_KEY=${API_KEY:-change-me}
+      - NINTONDO_RPC_URL=${NINTONDO_RPC_URL:-http://user:pass@node:22555}
+      - PRICE_FEED_URL=${PRICE_FEED_URL:-https://api.nintondo.trrxitte.com/price}
+      - REDIS_URL=redis://redis:6379
+      - DATABASE_URL=postgres://postgres:postgres@db:5432/nintondo
+      - RATE_LIMIT_WINDOW_MS=60000
+      - RATE_LIMIT_MAX=600
+      - ALLOW_RPC_PROXY=${ALLOW_RPC_PROXY:-true}
+    depends_on:
+      - redis
+      - db
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+  db:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: nintondo
+    ports:
+      - "5432:5432"

@@ -1,5 +1,5 @@
 {
-  "name": "mydogemask",
+  "name": "nintondo-mask",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -10,12 +10,16 @@
     "lint-fix": "yarn eslint --fix .",
     "watch": "nodemon --exec \"yarn run build\"",
     "docs": "./docs.sh",
-    "postinstall": "npx patch-package"
+    "postinstall": "npx patch-package",
+    "mock-api": "node server/mockApi.js",
+    "api": "NODE_ENV=production node production-api/index.js",
+    "api:dev": "NODE_ENV=development node production-api/index.js"
   },
   "dependencies": {
     "@mydogeofficial/dogecoin-js": "^0.1.0-beta.4",
     "@native-base/icons": "^0.0.11",
     "@native-base/next-adapter": "^1.1.9",
+    "@godaddy/terminus": "^4.11.1",
     "axios": "^1.7.4",
     "bip32": "2.0.4",
     "bip39": "^3.0.4",
@@ -23,15 +27,21 @@
     "bitcoinjs-message": "^2.2.0",
     "bitcore-lib-doge": "https://github.com/mydoge-com/bitcore-lib-doge",
     "bn.js": "=5.2.1",
+    "cors": "^2.8.5",
     "crypto-js": "^4.1.1",
     "dayjs": "^1.11.7",
     "dotenv": "^16.4.5",
     "elliptic": "^6.5.7",
+    "ioredis": "^5.4.1",
     "expo-font": "^10.0.3",
+    "express-rate-limit": "^7.4.0",
+    "express": "^4.19.2",
+    "helmet": "^7.1.0",
     "ky": "^0.33.1",
     "multicoin-address-validator": "0.5.10",
     "native-base": "3.4.28",
     "next": "12.0.4",
+    "prom-client": "^15.1.3",
     "qrcode": "1.5.1",
     "react": "17.0.2",
     "react-dom": "17.0.2",
@@ -48,6 +58,7 @@
     "secure-ls": "^1.2.6",
     "swr": "^2.2.5",
     "timeago-react": "^3.0.5",
+    "pg": "^8.11.5",
     "wif": "^5.0.0"
   },
   "devDependencies": {

@@ -5,7 +5,6 @@ import * as bitcoin from 'bitcoinjs-lib';
 import * as bitcoinMessage from 'bitcoinjs-message';
 import * as crypto from 'crypto';
 import { ec as EC } from 'elliptic';
-import * as Validator from 'multicoin-address-validator';
 import sb from 'satoshi-bitcoin';
 import * as wif from 'wif';
 
@@ -18,18 +17,18 @@ import { getLocalValue, setLocalValue } from './storage';
 
 const ec = new EC('secp256k1');
 
-// Dogecoin mainnet
+// Nintondo mainnet
 export const network = {
-  messagePrefix: '\x19Dogecoin Signed Message:\n',
-  bech32: 'dc',
-  bip44: 3,
+  messagePrefix: '\x19Nintondo Signed Message:\n',
+  bech32: 'nt',
+  bip44: 313,
   bip32: {
     public: 0x02facafd,
     private: 0x02fac398,
   },
-  pubKeyHash: 0x1e,
-  scriptHash: 0x16,
-  wif: 0x9e,
+  pubKeyHash: 0x35,
+  scriptHash: 0x41,
+  wif: 0xb5,
 };
 
 export function generatePhrase() {
@@ -70,7 +69,20 @@ export function decodeRawTx(rawTx) {
 }
 
 export function validateAddress(data) {
-  return Validator.validate(data, 'doge', 'prod');
+  try {
+    const decoded = bitcoin.address.fromBase58Check(data);
+    return (
+      decoded.version === network.pubKeyHash ||
+      decoded.version === network.scriptHash
+    );
+  } catch (e) {
+    try {
+      const decodedBech32 = bitcoin.address.fromBech32(data);
+      return decodedBech32.prefix === network.bech32;
+    } catch (err) {
+      return false;
+    }
+  }
 }
 
 export const validateTransaction = ({
@@ -84,7 +96,7 @@ export const validateTransaction = ({
   } else if (senderAddress.trim() === recipientAddress.trim()) {
     return 'Cannot send to yourself';
   } else if (!Number(dogeAmount) || Number(dogeAmount) < MIN_TX_AMOUNT) {
-    return 'Invalid Doge amount';
+    return 'Invalid Nintondo amount';
   } else if (Number(dogeAmount) > sb.toBitcoin(addressBalance)) {
     return 'Insufficient balance';
   }

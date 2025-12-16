@@ -5,11 +5,11 @@ const styleVariants = {
     button: {
       background: 'brandYellow.500',
       _hover: {
-        background: 'brandYellow.600',
+        background: 'brandYellow.400',
       },
     },
     text: {
-      color: 'black',
+      color: 'white',
     },
   },
   secondary: {

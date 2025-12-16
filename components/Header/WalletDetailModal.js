@@ -85,23 +85,7 @@ export const WalletDetailModal = ({
               <QRCode
                 value={address}
                 size={200}
-                avatarSource={{ uri: '/assets/dogecoin-logo-300.png' }}
-              />
-              <Image
-                source={{ uri: '/assets/mydoge-logo.svg' }}
-                w={120}
-                h='32px'
-                resizeMode='contain'
-                alt='mydoge'
-                bg='white'
-                ml='auto'
-                mr='auto'
-                position='absolute'
-                bottom='-45px'
-                left='50%'
-                style={{
-                  transform: [{ translateX: '-50%' }, { translateY: '-50%' }],
-                }}
+                avatarSource={{ uri: '/assets/nintondo.png' }}
               />
             </Box>
           </Box>

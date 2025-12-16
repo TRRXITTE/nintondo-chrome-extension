@@ -41,7 +41,7 @@ export const AmountScreen = ({
 
   const getDogecoinPrice = useCallback(() => {
     sendMessage({ message: MESSAGE_TYPES.GET_DOGECOIN_PRICE }, ({ usd }) => {
-      if (usd) {
+      if (usd !== undefined && usd !== null) {
         setDogecoinPrice(usd);
         onChangeTextDoge(formData.dogeAmount);
       }
@@ -59,7 +59,7 @@ export const AmountScreen = ({
         data: { address: walletAddress },
       },
       (balance) => {
-        if (balance) {
+        if (balance !== undefined && balance !== null) {
           setAddressBalance(balance);
         }
       }
@@ -216,7 +216,7 @@ export const AmountScreen = ({
         Paying
       </Text>
       <HStack alignItems='center' space='12px' pb='28px'>
-        <Avatar size='sm' bg='brandYellow.500' _text={{ color: 'gray.800' }}>
+        <Avatar size='sm' bg='brandYellow.500' _text={{ color: 'white' }}>
           {formData.address?.substring(0, 2)}
         </Avatar>
         <Text
@@ -267,7 +267,7 @@ export const AmountScreen = ({
             }}
             InputLeftElement={
               <Text fontSize='24px' fontWeight='semibold' px='4px'>
-                Ð
+                N
               </Text>
             }
             textAlign='center'
@@ -335,7 +335,7 @@ export const AmountScreen = ({
         <IoSwapVerticalOutline size='22px' style={{ paddingTop: 3 }} />
       </BigButton>
       <Text fontSize='20px' fontWeight='semibold' color='gray.500' pt='6px'>
-        {!isCurrencySwapped ? '$' : 'Ð'}
+        {!isCurrencySwapped ? '$' : 'N'}
         {isCurrencySwapped
           ? formData.dogeAmount || 0
           : formData.fiatAmount || 0}
@@ -343,7 +343,7 @@ export const AmountScreen = ({
       <HStack alignItems='center' pt='12px' space='8px'>
         {addressBalance ? (
           <Text fontSize='14px' color='gray.500'>
-            Balance: Ð{sb.toBitcoin(addressBalance)}
+            Balance: N{sb.toBitcoin(addressBalance)}
           </Text>
         ) : null}
         <Button

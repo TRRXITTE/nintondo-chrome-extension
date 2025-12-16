@@ -1,6 +1,6 @@
 import { Divider, HStack, Image, Stack, Text } from 'native-base';
 
-const DogecoinIcon = 'assets/dogecoin-icon.svg';
+const NintondoIcon = 'assets/coin.png';
 const ChartIcon = 'assets/chart.svg';
 
 export function Stats({ usdPrice, dogeStats, ...props }) {
@@ -8,7 +8,7 @@ export function Stats({ usdPrice, dogeStats, ...props }) {
     <HStack justifyContent='space-between' px={6} {...props}>
       <HStack ai='center' space='12px'>
         <HStack p='8px' bg='yellow.50' borderRadius={7}>
-          <Image src={DogecoinIcon} width='24px' height='24px' alt='dogecoin' />
+          <Image src={NintondoIcon} width='24px' height='24px' alt='nintondo' />
         </HStack>
         <Stack>
           <Text fontSize={11}>Price (USD)</Text>

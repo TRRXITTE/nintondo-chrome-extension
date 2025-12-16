@@ -12,15 +12,15 @@ import { AppContextProvider } from '../Context';
 const theme = extendTheme({
   colors: {
     brandYellow: {
-      100: '#fff8e6',
-      200: '#feebb3',
-      300: '#fede81',
-      400: '#fdd14e',
-      500: '#fdc41c',
-      600: '#e3ab02',
-      700: '#b18502',
-      800: '##7e5f01',
-      900: '##4c3901',
+      100: '#f0f0f0',
+      200: '#d9d9d9',
+      300: '#bfbfbf',
+      400: '#8c8c8c',
+      500: '#191919',
+      600: '#111111',
+      700: '#0d0d0d',
+      800: '#090909',
+      900: '#050505',
     },
   },
 });
@@ -32,7 +32,7 @@ function MyApp({ Component, pageProps }) {
           <AppContextProvider>
             <NativeBaseProvider isSSR={false} theme={theme}>
               <Head>
-                <title>MyDoge</title>
+                <title>Nintondo Nyan</title>
               </Head>
               <Component {...pageProps} />
             </NativeBaseProvider>

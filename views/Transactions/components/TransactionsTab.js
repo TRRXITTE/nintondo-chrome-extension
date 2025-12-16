@@ -17,7 +17,6 @@ import { TransactionModal } from './TransactionModal';
 
 export const TransactionsTab = ({
   toggleReceiveModal,
-  onBuy,
   transactions,
   loading,
   hasMore,
@@ -68,9 +67,6 @@ export const TransactionsTab = ({
             <Text fontSize='16px'>
               To get started, send DOGE to your wallet
             </Text>
-            <BigButton mt='24px' onPress={onBuy}>
-              Buy DOGE
-            </BigButton>
             <BigButton mt='18px' onPress={toggleReceiveModal}>
               Deposit DOGE
             </BigButton>

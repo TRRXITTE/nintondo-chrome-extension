@@ -3,18 +3,18 @@ import { FaLink } from 'react-icons/fa';
 
 import { OriginBadge } from './OriginBadge';
 
-const MydogeIcon = 'assets/mydoge-icon.svg';
+const NintondoIcon = 'assets/nintondo.png';
 
 export function ClientPopupLoading({ pageLoading, origin, loadingText }) {
   return (
     <>
       <Image
-        src={MydogeIcon}
+        src={NintondoIcon}
         width={66}
         height={66}
         alignSelf='center'
         zIndex={2}
-        alt='Mydoge icon'
+        alt='Nintondo icon'
       />
       <Box p='8px' bg='brandYellow.500' rounded='full' my='24px'>
         <FaLink />

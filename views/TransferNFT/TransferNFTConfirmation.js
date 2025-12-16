@@ -141,7 +141,7 @@ export const TransferNFTConfirmation = ({
         Transfer to
       </Text>
       <HStack alignItems='center' space='12px' pb='28px'>
-        <Avatar size='sm' bg='brandYellow.500' _text={{ color: 'gray.800' }}>
+        <Avatar size='sm' bg='brandYellow.500' _text={{ color: 'white' }}>
           {formData.address?.substring(0, 2)}
         </Avatar>
         <Text
@@ -154,10 +154,10 @@ export const TransferNFTConfirmation = ({
         </Text>
       </HStack>
       <Text fontSize='3xl' fontWeight='semibold' pt='6px'>
-        Ð{formData.dogeAmount}
+        N{formData.dogeAmount}
       </Text>
       <Text fontSize='13px' fontWeight='semibold' pt='6px'>
-        Network fee Ð{formData.fee}
+        Network fee N{formData.fee}
       </Text>
       <HStack alignItems='center' mt='30px' space='12px'>
         <Button

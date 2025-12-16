@@ -574,16 +574,11 @@ function onCreateWallet({ data = {}, sendResponse } = {}) {
 
 async function onGetDogecoinPrice({ sendResponse } = {}) {
   try {
-    const response = (
-      await mydoge.get('/wallet/info', {
-        params: { route: '/tickers/?currency=usd' },
-      })
-    ).data;
-
-    sendResponse?.(response.rates);
+    const response = (await mydoge.get('/price')).data;
+    sendResponse?.({ usd: Number(response.usd || 0) });
   } catch (err) {
     logError(err);
-    sendResponse?.(false);
+    sendResponse?.({ usd: 0 });
   }
 }
 
@@ -605,7 +600,8 @@ async function onGetAddressBalance({ data, sendResponse } = {}) {
     sendResponse?.(balances.length > 1 ? balances : balances[0]);
   } catch (err) {
     logError(err);
-    sendResponse?.(false);
+    // Fallback to zero to avoid spinner lock
+    sendResponse?.(0);
   }
 }
 
@@ -1184,7 +1180,7 @@ async function onNotifyTransactionSuccess({ data: { txId } } = {}) {
           chrome.notifications.create(txId, {
             type: 'basic',
             title: 'Transaction Confirmed',
-            iconUrl: '../assets/mydoge128.png',
+            iconUrl: '../assets/nintondo.png',
             message: `${sb.toBitcoin(transaction.vout[0].value)} DOGE sent to ${
               transaction.vout[0].addresses[0]
             }.`,
@@ -1195,7 +1191,7 @@ async function onNotifyTransactionSuccess({ data: { txId } } = {}) {
           chrome.notifications.create({
             type: 'basic',
             title: 'Transaction Unconfirmed',
-            iconUrl: '../assets/mydoge128.png',
+            iconUrl: '../assets/nintondo.png',
             message: `Transaction details could not be retrieved for \`${txId}\`.`,
           });
           chrome.offscreen?.closeDocument();

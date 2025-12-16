@@ -34,7 +34,7 @@ export function ClientDunesTransaction({
 
   const onRejectTransaction = useCallback(() => {
     handleResponse({
-      toastMessage: `MyDoge failed to authorize the transaction to ${origin}`,
+      toastMessage: `Nintondo failed to authorize the transaction to ${origin}`,
       toastTitle: 'Transaction Rejected',
       error: 'User refused transaction',
     });
@@ -134,7 +134,7 @@ export function ClientDunesTransaction({
       </Text>
       <RecipientAddress address={recipientAddress} />
       <Text fontSize='13px' fontWeight='semibold' pt='6px'>
-        Network fee: <Text fontWeight='normal'>Ð{transaction?.fee}</Text>
+        Network fee: <Text fontWeight='normal'>N{transaction?.fee}</Text>
       </Text>
 
       <HStack alignItems='center' mt='60px' space='12px'>

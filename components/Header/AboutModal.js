@@ -4,6 +4,10 @@ import { useLinks } from '../../hooks/useLinks';
 
 export const AboutModal = ({ showModal, onClose }) => {
   const { onLinkClick } = useLinks();
+  const manifestVersion =
+    typeof chrome !== 'undefined' && chrome?.runtime?.getManifest
+      ? chrome.runtime.getManifest().version
+      : 'dev';
 
   return (
     <Modal isOpen={showModal} onClose={onClose} size='xl'>
@@ -13,11 +17,9 @@ export const AboutModal = ({ showModal, onClose }) => {
         <Modal.Body pt='20px' pb='36px'>
           <VStack>
             <Text fontWeight='bold' fontSize='md'>
-              MyDoge Version
+              Nintondo Version
             </Text>
-            <Text color='gray.500'>
-              {chrome?.runtime?.getManifest().version}
-            </Text>
+            <Text color='gray.500'>{manifestVersion}</Text>
           </VStack>
           <VStack space='6px' mt='20px'>
             <Link
@@ -26,44 +28,46 @@ export const AboutModal = ({ showModal, onClose }) => {
                 color: 'blue.500',
                 fontWeight: 'semibold',
               }}
-              href='https://www.mydoge.com/terms'
-              onPress={() => onLinkClick('https://www.mydoge.com/terms')}
+              href='https://nintondo.trrxitte.com/terms'
+              onPress={() => onLinkClick('https://nintondo.trrxitte.com/terms')}
             >
               Terms of Use
             </Link>
             <Link
               fontSize='md'
-              href='https://www.mydoge.com/privacy'
+              href='https://nintondo.trrxitte.com/privacy'
               _text={{
                 fontSize: 'md',
                 color: 'blue.500',
                 fontWeight: 'semibold',
               }}
-              onPress={() => onLinkClick('https://www.mydoge.com/privacy')}
+              onPress={() =>
+                onLinkClick('https://nintondo.trrxitte.com/privacy')
+              }
             >
               Privacy Policy
             </Link>
             <Link
               fontSize='md'
-              href='https://mydoge.com'
+              href='https://nintondo.trrxitte.com'
               _text={{
                 fontSize: 'md',
                 color: 'blue.500',
                 fontWeight: 'semibold',
               }}
-              onPress={() => onLinkClick('https://mydoge.com')}
+              onPress={() => onLinkClick('https://nintondo.trrxitte.com')}
             >
               Visit our website
             </Link>
             <Link
               fontSize='md'
-              href='mailto:support@mydoge.com'
+              href='mailto:support@nintondo.trrxitte.com'
               _text={{
                 fontSize: 'md',
                 color: 'blue.500',
                 fontWeight: 'semibold',
               }}
-              onPress={() => onLinkClick('mailto:support@mydoge.com')}
+              onPress={() => onLinkClick('mailto:support@nintondo.trrxitte.com')}
             >
               Contact us
             </Link>

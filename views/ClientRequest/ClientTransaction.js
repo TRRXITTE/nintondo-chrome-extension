@@ -93,7 +93,7 @@ export function ClientTransaction({
 
   const onRejectTransaction = useCallback(() => {
     handleResponse({
-      toastMessage: `MyDoge failed to authorize the transaction to ${origin}`,
+      toastMessage: `Nintondo failed to authorize the transaction to ${origin}`,
       toastTitle: 'Transaction Rejected',
       error: 'User refused transaction',
     });
@@ -125,10 +125,10 @@ export function ClientTransaction({
         <RecipientAddress address={recipientAddress} />
 
         <Text fontSize='3xl' fontWeight='semibold' pt='6px'>
-          Ð{dogeAmount}
+          N{dogeAmount}
         </Text>
         <Text fontSize='13px' fontWeight='semibold' pt='6px'>
-          Network fee Ð{transaction.fee}
+          Network fee N{transaction.fee}
         </Text>
         <HStack alignItems='center' mt='60px' space='12px'>
           <BigButton
@@ -222,7 +222,7 @@ const ConfirmationModal = ({
             <VStack alignItems='center'>
               <Text>
                 Confirm transaction to send{' '}
-                <Text fontWeight='bold'>Ð{dogeAmount}</Text> to{' '}
+                <Text fontWeight='bold'>N{dogeAmount}</Text> to{' '}
               </Text>
               <Text
                 fontSize='10px'

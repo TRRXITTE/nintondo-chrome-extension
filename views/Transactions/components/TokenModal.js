@@ -124,14 +124,14 @@ export const TokenModal = ({ isOpen, onClose, token }) => {
               >
                 <Pill
                   label='Price'
-                  value={`Ɖ ${formatSatoshisAsDoge(
+                  value={`N ${formatSatoshisAsDoge(
                     tokenDetails.floorPrice,
                     2
                   )}`}
                 />
                 <Pill
                   label='Volume (24h)'
-                  value={`Ɖ ${Number(
+                  value={`N ${Number(
                     tokenDetails.twentyFourHourVolume
                   ).toLocaleString()}`}
                 />
@@ -268,7 +268,7 @@ export const TokenModal = ({ isOpen, onClose, token }) => {
                       <Text fontSize='13px'>
                         Initiate the first step of transferring your{' '}
                         <Text fontWeight='bold'>{ticker}</Text> tokens. This
-                        inscribes the token transfer intent on the Dogecoin
+                        inscribes the token transfer intent on the Nintondo
                         blockchain, making the inscribed amount of{' '}
                         <Text fontWeight='bold'>{ticker}</Text> available for
                         transfer.

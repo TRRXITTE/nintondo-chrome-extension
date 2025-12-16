@@ -161,7 +161,7 @@ export const Header = ({
                     <Avatar
                       size='30px'
                       bg='brandYellow.500'
-                      _text={{ color: 'gray.800' }}
+                      _text={{ color: 'white' }}
                       mr='12px'
                     >
                       {address?.substring(0, 2)}
@@ -187,7 +187,7 @@ export const Header = ({
           </VStack>
           <Divider my='6px' w='100%' />
           <MenuItem onPress={() => setOpenModal('WALLET_DETAIL')}>
-            <MdQrCode2 size='20px' alt='Receive Dogecoin' />
+            <MdQrCode2 size='20px' alt='Receive Nintondo' />
             Account Details
           </MenuItem>
           <Divider my='6px' w='100%' />
@@ -379,7 +379,7 @@ const DetailPopup = ({
             </VStack>
           ) : (
             <Text>
-              MyDoge is not connected to this website. To connect, find and
+              Nintondo is not connected to this website. To connect, find and
               click the Connect button on the site.
             </Text>
           )}
