@@ -17,10 +17,21 @@ export const Transaction = ({
     navigate(`/Transactions/tokens?selectedTx=${JSON.stringify(transaction)}`);
   };
 
+  const satAmount = Number.isFinite(Number(amount)) ? Number(amount) : 0;
+  const formattedAmount = formatSatoshisAsDoge(satAmount, 3);
+  const signedAmount = `${type === 'outgoing' ? '-' : '+'} Ɖ${formattedAmount}`;
+
   return (
     <Fragment key={id}>
       <Pressable onPress={selectTx} paddingTop='10px'>
-        <HStack p='2px'>
+        <HStack
+          p='12px'
+          bg='white'
+          rounded='16px'
+          borderWidth='1px'
+          borderColor='gray.100'
+          shadow='1'
+        >
           <VStack mr='12px'>
             <Avatar
               size='sm'
@@ -32,9 +43,7 @@ export const Transaction = ({
           </VStack>
           <VStack flex={1}>
             <Text fontSize='xs' fontWeight='medium'>
-              {address?.includes('Multiple')
-                ? address
-                : `${address?.slice(0, 8)}...${address?.slice(-4)}`}
+              {address || 'Unknown'}
             </Text>
 
             <HStack space='6px'>
@@ -56,10 +65,7 @@ export const Transaction = ({
           <VStack flexDirection='row' alignItems='flex-start' ml='8px'>
             <HStack
               _light={{
-                bg: type === 'outgoing' ? '#E4F0FF' : '#E0F8E8',
-              }}
-              _dark={{
-                bg: type === 'outgoing' ? '#000643' : '#001109',
+                bg: type === 'outgoing' ? '#EAF3FF' : '#E8F8EF',
               }}
               px='12px'
               py='3px'
@@ -83,11 +89,10 @@ export const Transaction = ({
                     : 'green.500',
                 }}
               >
-                {type === 'outgoing' ? '-' : '+'}{' '}
-                {formatSatoshisAsDoge(amount, 3)}
+                {signedAmount}
               </Text>
               <Text fontSize='sm' fontWeight='bold'>
-                {is69(formatSatoshisAsDoge(amount, 3)) && ' 😏'}
+                {is69(formattedAmount) && ' 😏'}
               </Text>
             </HStack>
           </VStack>

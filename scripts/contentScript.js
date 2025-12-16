@@ -387,6 +387,41 @@ import {
     false
   );
 
+  // Proactively push the current balance to the page when already connected.
+  const BALANCE_POLL_MS = 10000;
+  async function pushBalanceUpdate() {
+    const origin = window.location.origin;
+    try {
+      const client = await getConnectedClient(origin);
+      if (!client?.address) return;
+      const balance = await getAddressBalance(client.address);
+      window.postMessage(
+        {
+          type: MESSAGE_TYPES.CLIENT_GET_BALANCE_RESPONSE,
+          data: { balance, address: client.address },
+        },
+        origin
+      );
+      // Also fire a DOM event so sites can react without wiring postMessage.
+      window.dispatchEvent(
+        new CustomEvent('doge#balance', {
+          detail: { balance, address: client.address },
+        })
+      );
+    } catch (_err) {
+      // Not connected yet or unable to fetch; ignore and retry later.
+    }
+  }
+
+  pushBalanceUpdate();
+  setInterval(pushBalanceUpdate, BALANCE_POLL_MS);
+  window.addEventListener('focus', pushBalanceUpdate);
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden) {
+      pushBalanceUpdate();
+    }
+  });
+
   // Listen to messages from the background script and pass to the injected script
   chrome.runtime.onMessage.addListener(
     ({ type, data, error, origin }, sender) => {

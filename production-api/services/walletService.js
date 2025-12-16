@@ -44,28 +44,33 @@ async function scanAddressUtxos(address) {
 }
 
 async function getAddressInfo(address) {
+  // Try descriptor scan first; if unavailable, fall back to listunspent.
+  let utxos = [];
   try {
-    // Try address scan (works without importing, if node supports it)
-    let utxos = await scanAddressUtxos(address);
-    // Fallback to wallet-bound listunspent
-    if (!utxos.length) {
-      utxos = await callRpc('listunspent', [1, 9999999, [address]]);
-    }
-
-    const balanceCoins = utxos.reduce(
-      (sum, u) => sum + Number(u.amount || u.value || 0),
-      0
-    );
-    const balanceSats = Math.round(balanceCoins * 1e8);
-    return {
-      balance: balanceSats,
-      txids: utxos.map((u) => u.txid).filter(Boolean),
-      totalPages: 1,
-      page: 1,
-    };
-  } catch (e) {
-    return { balance: 0, txids: [], totalPages: 1, page: 1 };
+    utxos = await scanAddressUtxos(address);
+  } catch (_err) {
+    utxos = [];
   }
+
+  if (!utxos.length) {
+    try {
+      utxos = await callRpc('listunspent', [1, 9999999, [address]]);
+    } catch (_err) {
+      utxos = [];
+    }
+  }
+
+  const balanceCoins = utxos.reduce(
+    (sum, u) => sum + Number(u.amount || u.value || 0),
+    0
+  );
+  const balanceSats = Math.round(balanceCoins * 1e8);
+  return {
+    balance: balanceSats,
+    txids: utxos.map((u) => u.txid).filter(Boolean),
+    totalPages: 1,
+    page: 1,
+  };
 }
 
 module.exports = { getWalletInfo, getTransactionInfo, getAddressInfo };

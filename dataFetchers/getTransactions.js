@@ -21,15 +21,13 @@ export const getTransactions = ([pageIndex, walletAddress]) =>
           page: pageIndex,
         },
       },
-      ({ transactions }) => {
-        if (transactions) {
-          const formattedTransactions = [];
-          transactions.forEach((transaction) => {
-            formattedTransactions.push(
-              formatTransaction({ transaction, walletAddress })
-            );
-          });
-
+      (response) => {
+        // response may be { transactions, totalPages, page }
+        const transactions = response?.transactions;
+        if (Array.isArray(transactions)) {
+          const formattedTransactions = transactions.map((transaction) =>
+            formatTransaction({ transaction, walletAddress })
+          );
           resolve(formattedTransactions);
         } else {
           reject(new Error('Failed to get recent transactions'));

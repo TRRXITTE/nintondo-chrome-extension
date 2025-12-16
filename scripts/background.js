@@ -632,8 +632,19 @@ async function onGetTransactions({ data, sendResponse } = {}) {
     }
 
     const transactions = (
-      await Promise.all(txIds.map((txId) => getCachedTx(txId)))
-    ).sort((a, b) => b.blockTime - a.blockTime);
+      await Promise.all(
+        txIds.map(async (txId) => {
+          try {
+            return await getCachedTx(txId);
+          } catch (err) {
+            logError(err);
+            return null;
+          }
+        })
+      )
+    )
+      .filter(Boolean)
+      .sort((a, b) => b.blockTime - a.blockTime);
 
     sendResponse?.({ transactions, totalPages, page });
   } catch (err) {
@@ -1173,7 +1184,7 @@ async function onNotifyTransactionSuccess({ data: { txId } } = {}) {
         if (transaction?.confirmations >= TRANSACTION_CONFIRMATIONS) {
           chrome.notifications.onClicked.addListener(async (notificationId) => {
             chrome.tabs.create({
-              url: `https://sochain.com/tx/DOGE/${notificationId}`,
+          url: `https://mempool.nintondo.trrxitte.com/tx/${notificationId}`,
             });
             await chrome.notifications.clear(notificationId).catch(() => {});
           });

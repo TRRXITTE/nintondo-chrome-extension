@@ -4,7 +4,12 @@ const { callRpc } = require('../clients/rpc');
 const { estimateSmartFee } = require('../services/txService');
 
 const router = Router();
-const WHITELIST = new Set(['estimatesmartfee', 'getblockchaininfo', 'getblockcount']);
+const WHITELIST = new Set([
+  'estimatesmartfee',
+  'getblockchaininfo',
+  'getblockcount',
+  'sendrawtransaction',
+]);
 
 router.post('/', async (req, res, next) => {
   try {

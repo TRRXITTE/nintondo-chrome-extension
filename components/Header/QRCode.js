@@ -6,6 +6,7 @@ import React, { useMemo } from 'react';
 import Svg, { Circle, ClipPath, Defs, Rect } from 'react-native-svg';
 
 const generateMatrix = (value, errorCorrectionLevel) => {
+  if (!value) return [];
   const arr = Array.prototype.slice.call(
     QRCodeUtil.create(value, { errorCorrectionLevel }).modules.data,
     0

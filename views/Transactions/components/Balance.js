@@ -1,12 +1,11 @@
 import { HStack, Image, Pressable, Spinner, Text, VStack } from 'native-base';
 import { useCallback, useState } from 'react';
-import sb from 'satoshi-bitcoin';
 
 import { useInterval } from '../../../hooks/useInterval';
 import { MESSAGE_TYPES } from '../../../scripts/helpers/constants';
 import { sendMessage } from '../../../scripts/helpers/message';
 import { logError } from '../../../utils/error';
-import { asFiat, formatSatoshisAsDoge } from '../../../utils/formatters';
+import { formatSatoshisAsDoge } from '../../../utils/formatters';
 
 const EyeDisabled = 'assets/eye-disabled.svg';
 const EyeEnabled = 'assets/eye-enabled.svg';
@@ -26,9 +25,6 @@ const QUERY_INTERVAL = 10000;
 
 export function Balance({ walletAddress }) {
   const [balance, setBalance] = useState(null);
-  const [usdPrice, setUSDPrice] = useState(0);
-
-  const usdValue = balance ? sb.toBitcoin(balance) * usdPrice : 0;
   const getAddressBalance = useCallback(() => {
     sendMessage(
       {
@@ -45,23 +41,12 @@ export function Balance({ walletAddress }) {
     );
   }, [walletAddress]);
 
-  const getDogecoinPrice = useCallback(() => {
-    sendMessage({ message: MESSAGE_TYPES.GET_DOGECOIN_PRICE }, ({ usd }) => {
-      if (usd !== undefined && usd !== null) {
-        setUSDPrice(usd);
-        return;
-      }
-      logError(new Error('Failed to get Nintondo price'));
-    });
-  }, []);
-
   useInterval(
     () => {
       if (!walletAddress) {
         return;
       }
       getAddressBalance();
-      getDogecoinPrice();
     },
     QUERY_INTERVAL,
     true
@@ -104,40 +89,34 @@ export function Balance({ walletAddress }) {
                   : 'N******'}
               </Text>
             </HStack>
-            <HStack alignItems='center' justifyContent='center'>
-              <Text secondary color='gray.200' fontWeight='500'>
-                {!balanceVisible
-                  ? typeof usdValue === 'number'
-                    ? usdValue === 0
-                      ? '$zero'
-                      : `$${asFiat(usdValue, 2)}`
-                    : ' '
-                  : '$***.**'}
-              </Text>
-
-              {balance === null ? null : (
-                <Pressable onPress={toggleBalanceVisibility} p='8px'>
-                  <VStack justifyContent='center'>
-                    {balanceVisible ? (
-                      <Image
-                        source={EyeEnabled}
-                        width='16px'
-                        height='12px'
-                        alt='show balance'
-                      />
-                    ) : null}
-                    {!balanceVisible ? (
-                      <Image
-                        source={EyeDisabled}
-                        width='16px'
-                        height='16px'
-                        alt='hide balance'
-                      />
-                    ) : null}
-                  </VStack>
-                </Pressable>
-              )}
-            </HStack>
+            {balance === null ? null : (
+              <Pressable
+                onPress={toggleBalanceVisibility}
+                p='8px'
+                position='absolute'
+                bottom='4px'
+                right='8px'
+              >
+                <VStack justifyContent='center'>
+                  {balanceVisible ? (
+                    <Image
+                      source={EyeEnabled}
+                      width='16px'
+                      height='12px'
+                      alt='show balance'
+                    />
+                  ) : null}
+                  {!balanceVisible ? (
+                    <Image
+                      source={EyeDisabled}
+                      width='16px'
+                      height='16px'
+                      alt='hide balance'
+                    />
+                  ) : null}
+                </VStack>
+              </Pressable>
+            )}
           </>
         )}
       </VStack>

@@ -5,6 +5,7 @@ import { FiArrowUpRight, FiCopy } from 'react-icons/fi';
 
 import { BigButton } from '../../../components/Button';
 import { InscriptionIndicator } from '../../../components/InscriptionIndicator';
+import { QRCode } from '../../../components/Header/QRCode';
 import { useCopyText } from '../../../hooks/useCopyText';
 import { mydoge } from '../../../scripts/api';
 import { TRANSACTION_TYPES } from '../../../scripts/helpers/constants';
@@ -36,6 +37,9 @@ export const TransactionModal = ({
 
   if (!isOpen) return null;
 
+  const satAmount = Number.isFinite(Number(amount)) ? Number(amount) : 0;
+  const formattedAmount = formatSatoshisAsDoge(satAmount, 3);
+
   return (
     <Modal isOpen={isOpen} onClose={onClose} size='full'>
       <Modal.Content w='90%'>
@@ -61,12 +65,10 @@ export const TransactionModal = ({
               <Text
                 fontSize='sm'
                 fontWeight='semibold'
-                color='gray.500'
+                color='gray.600'
                 textAlign='center'
               >
-                {address?.includes('Multiple')
-                  ? address
-                  : `${address?.slice(0, 8)}...${address?.slice(-4)}`}
+                {address || 'Unknown address'}
               </Text>
               <Button
                 variant='subtle'
@@ -87,7 +89,7 @@ export const TransactionModal = ({
               fontWeight='semibold'
               pb='12px'
             >
-              Ɖ{formatSatoshisAsDoge(amount, 3)}
+              Ɖ{formattedAmount}
             </Text>
             <HStack justifyContent='center' w='100%' mb='8px'>
               <InscriptionIndicator
@@ -99,6 +101,15 @@ export const TransactionModal = ({
                 showFullLabel
               />
             </HStack>
+
+            <Box mt='12px' p='14px' bg='gray.50' rounded='16px' w='100%'>
+              <Text fontWeight='semibold' pb='6px'>
+                Full address
+              </Text>
+              <Text fontSize='sm' color='gray.600' wordBreak='break-all'>
+                {address || 'Unknown'}
+              </Text>
+            </Box>
 
             {cachedInscription &&
             (cachedInscription.txType ===
@@ -129,13 +140,26 @@ export const TransactionModal = ({
                 {dayjs(blockTime * 1000).format('YYYY-MM-DD HH:mm:ss')}
               </Text>
             </HStack>
+            <Box mt='20px' mb='6px'>
+              <Text textAlign='center' fontWeight='semibold' pb='8px'>
+                Scan receiver address
+              </Text>
+              <QRCode
+                size={180}
+                value={address || ' '}
+                logoSize={0}
+                logoMargin={0}
+              />
+            </Box>
             <Box pt='32px'>
               <BigButton
-                onPress={() => window.open(`https://sochain.com/tx/DOGE/${id}`)}
+                onPress={() =>
+                  window.open(`https://mempool.nintondo.trrxitte.com/tx/${id}`)
+                }
                 variant='secondary'
                 px='28px'
               >
-                View on SoChain <FiArrowUpRight />
+                View on Mempool <FiArrowUpRight />
               </BigButton>
             </Box>
           </VStack>
