@@ -50,7 +50,12 @@ export const ConfirmationScreen = ({
         sendMessage(
           {
             message: MESSAGE_TYPES.SEND_TRANSACTION,
-            data: { rawTx: formData.rawTx, selectedAddressIndex },
+            data: {
+              rawTx: formData.rawTx,
+              selectedAddressIndex,
+              senderAddress: walletAddress,
+              dogeAmount: formData.dogeAmount,
+            },
           },
           (txId) => {
             if (txId) {

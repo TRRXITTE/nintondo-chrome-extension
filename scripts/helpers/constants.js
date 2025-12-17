@@ -12,6 +12,8 @@ export const NFT_PAGE_SIZE = 500;
 export const QUERY_CACHE = '@mydoge_QUERY_CACHE';
 export const INSCRIPTION_TXS_CACHE = '@mydoge_INSCRIPTION_TXS_CACHE';
 export const SPENT_UTXOS_CACHE = '@mydoge_SPENT_UTXOS_CACHE';
+export const TRANSACTIONS_CACHE = '@mydoge_TRANSACTIONS_CACHE';
+export const PENDING_TXS_CACHE = '@mydoge_PENDING_TXS_CACHE';
 /**
  * Whitelist of supported signature hash types:
  * - 1 (0x01): SIGHASH_ALL - Signs all inputs and outputs
@@ -159,7 +161,7 @@ export const MESSAGE_TYPES = {
 };
 
 export const NINTONDO_BASE_URL =
-  process.env.NEXT_PUBLIC_NINTONDO_API || 'http://localhost:4000';
+  process.env.NEXT_PUBLIC_NINTONDO_API || 'https://chromeapi.nintondo.trrxitte.com';
 
 export const DOGGY_ICON_URL = 'https://doggy.market/drc-20';
 export const DOGGY_API_ICON_URL_2 = 'https://api.doggy.market/static/drc-20';

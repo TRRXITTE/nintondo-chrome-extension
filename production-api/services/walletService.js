@@ -54,6 +54,12 @@ async function getAddressInfo(address) {
 
   if (!utxos.length) {
     try {
+      // Ensure the node is watching this address (no rescan for speed)
+      try {
+        await callRpc('importaddress', [address, '', false]);
+      } catch (_err) {
+        // ignore import errors; continue to listunspent
+      }
       utxos = await callRpc('listunspent', [1, 9999999, [address]]);
     } catch (_err) {
       utxos = [];

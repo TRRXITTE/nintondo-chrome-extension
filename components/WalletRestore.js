@@ -149,6 +149,7 @@ export const WalletRestore = ({
         message: MESSAGE_TYPES.RESET_WALLET,
         data: {
           password: formData.password,
+          confirm: formData.confirm,
           seedPhrase: cleanSeed(formData.seedPhrase).join(' '),
         },
       },

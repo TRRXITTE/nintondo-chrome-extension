@@ -33,15 +33,21 @@ export function getTxSummary(tx, address) {
 
 export const formatTransaction = ({ transaction: tx, walletAddress }) => {
   let type = 'incoming';
-  let amountIn = 0;
-  let amountOut = 0;
   let totalIn = 0;
   let totalOut = 0;
+  let walletInputs = 0;
+  let walletOutputs = 0;
+  let externalOutputs = 0;
   let incomingAddress = tx.address || '';
   let outgoingAddress = tx.address || '';
   const fallbackAmountSats = Number(tx.dogeAmount || 0) * 1e8;
+  let hasCoinbaseInput = false;
 
   (tx.vin || []).forEach((input = {}) => {
+    if (input.coinbase) {
+      hasCoinbaseInput = true;
+      return;
+    }
     const addresses = input.addresses || [];
     const [address] = addresses;
     const value = Number(input.value || 0);
@@ -51,7 +57,7 @@ export const formatTransaction = ({ transaction: tx, walletAddress }) => {
     }
 
     if (addresses.includes(walletAddress)) {
-      amountOut += value;
+      walletInputs += value;
     }
 
     totalIn += value;
@@ -68,7 +74,9 @@ export const formatTransaction = ({ transaction: tx, walletAddress }) => {
       }
 
       if (addresses.includes(walletAddress)) {
-        amountIn += value;
+        walletOutputs += value;
+      } else {
+        externalOutputs += value;
       }
 
       totalOut += value;
@@ -77,15 +85,23 @@ export const formatTransaction = ({ transaction: tx, walletAddress }) => {
     }
   });
 
-  if (amountOut > amountIn) {
-    type = 'outgoing';
-  }
-
+  // Determine direction and amount
   const feeRaw = totalIn - totalOut;
   const fee = Number.isFinite(feeRaw) ? feeRaw : 0;
-  let amountRaw =
-    type === 'incoming' ? amountIn - amountOut : amountOut - amountIn - fee;
-  let amount = Number.isFinite(amountRaw) ? amountRaw : 0;
+  let amount = 0;
+
+  if (walletInputs > 0 && externalOutputs > 0) {
+    type = 'outgoing';
+    amount = externalOutputs + fee;
+  } else {
+    type = 'incoming';
+    amount = walletOutputs;
+  }
+
+  if (hasCoinbaseInput) {
+    type = 'incoming';
+    amount = walletOutputs || totalOut || amount;
+  }
 
   if (amount === 0 && fallbackAmountSats) {
     amount = fallbackAmountSats;

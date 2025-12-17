@@ -14,7 +14,9 @@ export const Transaction = ({
   const { navigate } = useAppContext();
 
   const selectTx = () => {
-    navigate(`/Transactions/tokens?selectedTx=${JSON.stringify(transaction)}`);
+    if (!transaction) return;
+    const encoded = encodeURIComponent(JSON.stringify(transaction));
+    navigate(`/Transactions/tokens?selectedTx=${encoded}`);
   };
 
   const satAmount = Number.isFinite(Number(amount)) ? Number(amount) : 0;

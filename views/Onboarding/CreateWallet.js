@@ -81,7 +81,7 @@ export const CreateWallet = () => {
       sendMessage(
         {
           message: MESSAGE_TYPES.CREATE_WALLET,
-          data: { password: formData.password },
+          data: { password: formData.password, confirm: formData.confirm },
         },
         ({ authenticated, wallet }) => {
           if (authenticated && wallet) {

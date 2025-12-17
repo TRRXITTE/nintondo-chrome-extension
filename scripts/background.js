@@ -10,6 +10,7 @@ import {
   CONNECTED_CLIENTS,
   FEE_RATE_KB,
   INSCRIPTION_TXS_CACHE,
+  PENDING_TXS_CACHE,
   MESSAGE_TYPES,
   ONBOARDING_COMPLETE,
   PASSWORD,
@@ -17,6 +18,7 @@ import {
   SPENT_UTXOS_CACHE,
   TRANSACTION_PAGE_SIZE,
   TRANSACTION_TYPES,
+  TRANSACTIONS_CACHE,
   WALLET,
 } from './helpers/constants';
 import { getSpendableUtxos, inscribe } from './helpers/doginals';
@@ -327,6 +329,15 @@ function onSendTransaction({ data = {}, sendResponse } = {}) {
           setLocalValue({ [INSCRIPTION_TXS_CACHE]: txsCache });
         }
 
+        // Track pending txid
+        const pending = (await getLocalValue(PENDING_TXS_CACHE)) ?? [];
+        pending.push({
+          txid: jsonrpcRes.result,
+          createdAt: Date.now(),
+          amount: data.dogeAmount,
+        });
+        setLocalValue({ [PENDING_TXS_CACHE]: pending });
+
         sendResponse(jsonrpcRes.result);
       } catch (err) {
         logError(err);
@@ -338,7 +349,7 @@ function onSendTransaction({ data = {}, sendResponse } = {}) {
 
 async function onSendInscribeTransfer({ data = {}, sendResponse } = {}) {
   try {
-    const results = [];
+      const results = [];
     let i = 0;
 
     for await (const signed of data.txs) {
@@ -362,6 +373,10 @@ async function onSendInscribeTransfer({ data = {}, sendResponse } = {}) {
       await cacheSignedTx(signed);
 
       results.push(jsonrpcRes.result);
+      // Track pending txids
+      const pending = (await getLocalValue(PENDING_TXS_CACHE)) ?? [];
+      pending.push({ txid: jsonrpcRes.result, createdAt: Date.now() });
+      setLocalValue({ [PENDING_TXS_CACHE]: pending });
       i++;
     }
 
@@ -461,6 +476,10 @@ async function onSendPsbt({ data = {}, sendResponse } = {}) {
 
     await cacheSignedTx(data.rawTx);
 
+    const pending = (await getLocalValue(PENDING_TXS_CACHE)) ?? [];
+    pending.push({ txid: jsonrpcRes.result, createdAt: Date.now() });
+    setLocalValue({ [PENDING_TXS_CACHE]: pending });
+
     sendResponse(jsonrpcRes.result);
   } catch (err) {
     logError(err);
@@ -522,7 +541,7 @@ const clientRequestHandlers = CLIENT_POPUP_MESSAGE_PAIRS.reduce((acc, pair) => {
 // Generates a seed phrase, root keypair, child keypair + address 0
 // Encrypt + store the private data and address
 function onCreateWallet({ data = {}, sendResponse } = {}) {
-  if (data.password) {
+  if (data.password && data.confirm && data.password === data.confirm) {
     const phrase = data.seedPhrase ?? generatePhrase();
     const root = generateRoot(phrase);
     const child = generateChild(root, 0);
@@ -567,8 +586,62 @@ function onCreateWallet({ data = {}, sendResponse } = {}) {
       })
       .catch(() => sendResponse?.(false));
   } else {
-    sendResponse?.(false);
+    sendResponse?.({ authenticated: false, error: 'Password mismatch' });
   }
+  return true;
+}
+
+// Reset/import wallet using provided seed phrase; only requires a single password.
+function onResetWallet({ data = {}, sendResponse } = {}) {
+  if (!data.password || !data.seedPhrase) {
+    sendResponse?.({ authenticated: false, error: 'Missing seed or password' });
+    return true;
+  }
+
+  const phrase = data.seedPhrase;
+  const root = generateRoot(phrase);
+  const child = generateChild(root, 0);
+  const address0 = generateAddress(child);
+
+  const wallet = {
+    phrase,
+    root: root.toWIF(),
+    children: [child.toWIF()],
+    addresses: [address0],
+    nicknames: { [address0]: 'Address 1' },
+  };
+
+  const encryptedPassword = encrypt({
+    data: hash(data.password),
+    password: data.password,
+  });
+  const encryptedWallet = encrypt({
+    data: wallet,
+    password: data.password,
+  });
+
+  const sessionWallet = {
+    addresses: wallet.addresses,
+    nicknames: wallet.nicknames,
+  };
+
+  Promise.all([
+    setLocalValue({
+      [PASSWORD]: encryptedPassword,
+      [WALLET]: encryptedWallet,
+      [ONBOARDING_COMPLETE]: true,
+    }),
+    setSessionValue({
+      [AUTHENTICATED]: true,
+      [WALLET]: sessionWallet,
+      [PASSWORD]: data.password,
+    }),
+  ])
+    .then(() => {
+      sendResponse?.({ authenticated: true, wallet: sessionWallet });
+    })
+    .catch(() => sendResponse?.(false));
+
   return true;
 }
 
@@ -610,6 +683,10 @@ async function onGetTransactions({ data, sendResponse } = {}) {
   let txIds = [];
   let totalPages;
   let page;
+  const walletAddress = data.address;
+  const prevTransactions = (await getLocalValue(TRANSACTIONS_CACHE)) ?? [];
+  const prevTxIds = new Set(prevTransactions.map((t) => t.txid || t.id));
+  const pendingCache = (await getLocalValue(PENDING_TXS_CACHE)) ?? [];
 
   try {
     const response = (
@@ -627,7 +704,25 @@ async function onGetTransactions({ data, sendResponse } = {}) {
     page = response.page;
 
     if (!txIds?.length) {
-      sendResponse?.({ transactions: [], totalPages, page });
+      const pendingTxs = pendingCache.map((p) => ({
+        txid: p.txid,
+        confirmations: 0,
+        blockTime: Math.floor((p.createdAt ?? Date.now()) / 1000),
+        vout: [
+          {
+            addresses: [walletAddress],
+            value: sb.toSatoshi(Number(p.amount) || 0),
+          },
+        ],
+        vin: [],
+        address: walletAddress,
+      }));
+      const cachedFallback = prevTransactions.length ? prevTransactions : [];
+      sendResponse?.({
+        transactions: [...pendingTxs, ...cachedFallback],
+        totalPages,
+        page,
+      });
       return;
     }
 
@@ -646,10 +741,76 @@ async function onGetTransactions({ data, sendResponse } = {}) {
       .filter(Boolean)
       .sort((a, b) => b.blockTime - a.blockTime);
 
-    sendResponse?.({ transactions, totalPages, page });
+    const confirmedTxIds = new Set(transactions.map((t) => t.txid));
+    const stillPending = pendingCache.filter(
+      (p) => !confirmedTxIds.has(p.txid)
+    );
+    const pendingTxs = stillPending.map((p) => ({
+      txid: p.txid,
+      confirmations: 0,
+      blockTime: Math.floor((p.createdAt ?? Date.now()) / 1000),
+      vout: [
+        {
+          addresses: [walletAddress],
+          value: sb.toSatoshi(Number(p.amount) || 0),
+        },
+      ],
+      vin: [],
+      address: walletAddress,
+    }));
+
+    const mergedTransactions = [...pendingTxs, ...transactions].sort(
+      (a, b) => b.blockTime - a.blockTime
+    );
+
+    // Notify on new incoming txs
+    mergedTransactions.forEach((tx) => {
+      const txid = tx.txid || tx.id;
+      if (!txid || prevTxIds.has(txid)) return;
+      const isIncoming = tx.vout?.some((o) =>
+        o.addresses?.includes(walletAddress)
+      );
+      if (isIncoming && chrome?.notifications) {
+        chrome.notifications.create(
+          `incoming-${txid}`,
+          {
+            type: 'basic',
+            iconUrl: 'icons/icon128.png',
+            title: 'Incoming Nintondo',
+            message: `Received ${tx.vout?.[0]?.value ?? ''} at your address`,
+          },
+          () => {}
+        );
+      }
+    });
+
+    await Promise.all([
+      setLocalValue({ [TRANSACTIONS_CACHE]: mergedTransactions }),
+      setLocalValue({ [PENDING_TXS_CACHE]: stillPending }),
+    ]);
+
+    sendResponse?.({ transactions: mergedTransactions, totalPages, page });
   } catch (err) {
     logError(err);
-    sendResponse?.(false);
+    const pendingTxs = pendingCache.map((p) => ({
+      txid: p.txid,
+      confirmations: 0,
+      blockTime: Math.floor((p.createdAt ?? Date.now()) / 1000),
+      vout: [
+        {
+          addresses: [walletAddress],
+          value: sb.toSatoshi(Number(p.amount) || 0),
+        },
+      ],
+      vin: [],
+      address: walletAddress,
+    }));
+    const cachedFallback = prevTransactions.length ? prevTransactions : [];
+    sendResponse?.({
+      transactions: [...pendingTxs, ...cachedFallback],
+      totalPages,
+      page,
+    });
   }
 }
 
@@ -1088,6 +1249,10 @@ function onAuthenticate({ data = {}, sendResponse } = {}) {
       const authenticated = decryptedPass === hash(data.password);
 
       if (authenticated) {
+        if (data.confirm && data.confirm !== data.password) {
+          sendResponse?.({ authenticated: false, error: 'Password mismatch' });
+          return;
+        }
         const decryptedWallet = decrypt({
           data: encryptedWallet,
           password: data.password,
@@ -1218,8 +1383,10 @@ export const messageHandler = ({ message, data }, sender, sendResponse) => {
   if (!message) return;
   switch (message) {
     case MESSAGE_TYPES.CREATE_WALLET:
-    case MESSAGE_TYPES.RESET_WALLET:
       onCreateWallet({ data, sendResponse, sender });
+      break;
+    case MESSAGE_TYPES.RESET_WALLET:
+      onResetWallet({ data, sendResponse, sender });
       break;
     case MESSAGE_TYPES.AUTHENTICATE:
       onAuthenticate({ data, sendResponse, sender });
